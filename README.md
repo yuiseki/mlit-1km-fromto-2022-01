@@ -47,7 +47,7 @@ one that trusted dates would pass a dataset that had. `01_download.py`
 compares every file with `REFERENCE.sha256` and stops on the first that
 differs.
 
-## Two traps
+## Three traps
 
 **Codes are text.** `prefcode` is `'01'` and `month` is `'01'`. Only
 `population` is an integer. `WHERE prefcode = 13` matches nothing.

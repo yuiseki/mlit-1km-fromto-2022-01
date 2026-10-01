@@ -95,3 +95,23 @@ def test_load_can_add_a_version_column(tmp_path):
         ("2019", "01"),
         ("2020", "02"),
     ]
+
+
+def test_parquet_is_written_without_bloom_filters(tmp_path):
+    # DuckDB reads a column's bloom filter in every row group a filter touches,
+    # even one the min/max statistics already rule out. Over HTTP that is a
+    # request per row group per filtered column: 1,114 for one ward and month.
+    import duckdb
+
+    con = duckdb.connect()
+    p = tmp_path / "t.parquet"
+    m.write(
+        con,
+        "select lpad((i % 47 + 1)::varchar, 2, '0') as prefcode, 1 as population from range(20000) t(i)",
+        p,
+        {"rows": 20000, "population": 20000},
+    )
+    got = con.sql(
+        f"select count(*) filter (where bloom_filter_offset is not null) from parquet_metadata('{p}')"
+    ).fetchone()[0]
+    assert got == 0

@@ -92,8 +92,15 @@ def extract(zips: list[Path], out: Path, keep: Callable[[str], bool] = lambda n:
 
 
 def write(con, query: str, path: Path, expected: dict) -> None:
+    # No bloom filters. DuckDB reads a column's bloom filter in every row group
+    # that a filter on that column touches, even a row group the min/max
+    # statistics already rule out. dayflag and timezone hold 0, 1 and 2 in
+    # every row group, so a query on one ward and month made 1,114 requests
+    # over HTTP and took 32 s from the Hub. The rows are sorted by prefecture,
+    # year and month, and the statistics alone skip what is not wanted.
     con.execute(
-        f"copy ({query}) to '{path}' (format parquet, compression zstd, row_group_size 100000)"
+        f"copy ({query}) to '{path}' (format parquet, compression zstd, "
+        "row_group_size 100000, write_bloom_filter false)"
     )
     got = con.sql(f"select count(*) from '{path}'").fetchone()[0]
     if got != expected["rows"]:
