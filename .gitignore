@@ -1,0 +1,12 @@
+# The data itself lives on the Hugging Face Hub, not in git:
+#   https://huggingface.co/datasets/yuiseki/mlit-1km-fromto-2022-01
+# Fetched by scripts/01..03 rather than edited by hand. data/README.md,
+# data/LICENSE and data/provenance.yaml are tracked: they are the dataset card
+# and its notices, not the data.
+data/raw/
+data/parquet/
+
+__pycache__/
+*.pyc
+.venv/
+data/work/

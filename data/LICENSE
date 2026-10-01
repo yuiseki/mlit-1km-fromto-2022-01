@@ -1,0 +1,42 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+Everything under this directory comes from 全国の人流オープンデータ
+（1kmメッシュ、市区町村単位発地別）, published by the Ministry of Land,
+Infrastructure, Transport and Tourism (国土交通省 不動産・建設経済局
+情報活用推進課) on G空間情報センター:
+
+  出典：「全国の人流オープンデータ」（国土交通省）
+  （https://www.geospatial.jp/ckan/dataset/mlit-1km-fromto）を加工して作成
+
+The publisher applies 全国の人流オープンデータ利用規約 (令和3年1月27日),
+raw/license.pdf in this directory. It follows the Government of Japan
+Standard Terms of Use (Version 2.0), which state that content under them may
+also be used in accordance with CC BY 4.0. That is why the label above is
+CC BY 4.0: copying, public transmission and adaptation, commercial use
+included, with attribution.
+
+The terms ask that a modification be declared apart from the attribution,
+and that modified content not be presented as though the government had made
+it. This dataset is not published by the Government of Japan.
+
+  本データセットは「全国の人流オープンデータ」（国土交通省）を加工して
+  作成しています。加工の内容は次のとおりです。
+
+  1. 都道府県別・月別に入れ子の zip で配布されている CSV を、種類ごとに
+     1 つの Parquet にまとめた（parquet/ 以下）
+  2. population を整数にした。ほかの列は CSV のとおりの文字列のまま
+  3. メッシュ属性とマスタは 2019 年版と 2020 年版を version 列で区別して
+     1 つにまとめた。マスタは UTF-8 版だけを使った
+  4. メッシュ属性に、範囲の経緯度から作った四角形の geometry 列を加えた
+  5. 行を並べ替えた
+
+  値は変更していません。raw/ 以下は配布された zip と PDF をそのまま保存
+  したもので、バイト列は原本と同一です。
+
+raw/MANIFEST.sha256 records the sha256, the size and the Last-Modified header
+of each file as it was fetched.
+
+The code that fetches, checks and converts is MIT, in the repository this
+dataset was built from (https://github.com/yuiseki/mlit-1km-fromto-2022-01),
+and does not apply here.

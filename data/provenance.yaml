@@ -1,0 +1,74 @@
+# Where this data comes from and what was done to it.
+
+source:
+  name: 全国の人流オープンデータ（1kmメッシュ、市区町村単位発地別）
+  publisher: 国土交通省 不動産・建設経済局 情報活用推進課 / MLIT, Government of Japan
+  origin: |
+    GPS positions from smartphone apps that embed Agoop Corp.'s SDK, as the
+    data definition (raw/opendatadefinition.pdf) states.
+  page: https://www.geospatial.jp/ckan/dataset/mlit-1km-fromto
+  api: https://www.geospatial.jp/ckan/api/3/action/package_show?id=mlit-1km-fromto
+  fetched: 2026-10-02
+  licence:
+    applied: 全国の人流オープンデータ利用規約 (令和3年1月27日), raw/license.pdf
+    follows: Government of Japan Standard Terms of Use, Version 2.0
+    equivalent: CC BY 4.0
+    attribution_required: true
+    share_alike: false
+    credit: 出典：「全国の人流オープンデータ」（国土交通省）（https://www.geospatial.jp/ckan/dataset/mlit-1km-fromto）を加工して作成
+
+snapshot:
+  vintage: 2022-01
+  note: |
+    The month in the name is the month the files last changed. On 2026-09-29
+    every one of the 99 files carried a Last-Modified between 2021-02-19 and
+    2022-01-14, and their sha256 were recorded (scripts/REFERENCE.sha256).
+
+    On 2026-10-02 every one of the 99 came back with a Last-Modified of
+    2026-09-30 and the same bytes: the publisher put the objects again
+    without changing them. A date from the server cannot carry the claim,
+    so scripts/01_download.py checks the bytes against the reference instead
+    and stops on any difference.
+
+    The page's metadata_modified, 2024-10-04, is a change to the catalogue
+    entry. No file changed then.
+  period: 2019-01 to 2021-12, monthly
+  left_out: |
+    Six PDFs on the page that are not data: a QGIS manual and five worked
+    examples of analysis.
+  checksums: raw/MANIFEST.sha256
+
+contents:
+  monthly_mdp_mesh1km:
+    csvs: 1692
+    rows: 38079507
+    population_total: 41119094290
+  monthly_fromto_city:
+    csvs: 1692
+    rows: 2340980
+    population_total: 41178569986
+  attribute_mesh1km:
+    rows: 775000
+    by_version: {"2019": 387500, "2020": 387500}
+  prefcode_citycode_master: {rows: 3792}
+  regioncode_master: {rows: 94}
+
+integrity:
+  note: Checked by scripts/02_verify.py on the zips, with zipfile and the csv module only.
+  every_prefecture_has_36_months: true
+  every_csv_holds_only_its_prefecture: true
+  parquet_rows_and_population_match_the_csvs: true
+
+modifications:
+  raw: none. The publisher's zips and PDFs, byte for byte.
+  parquet:
+    - the CSVs nested by prefecture and month became one Parquet per kind
+    - population became an integer; every other column is the text of the CSV
+    - the attribute file and the masters keep both their 2019 and 2020 files, told apart by an added version column; only the UTF-8 masters were used
+    - attribute_mesh1km gained a polygon geometry from lon_min, lat_min, lon_max, lat_max (WGS 84)
+    - rows were sorted
+  reproducibility: |
+    The values are reproducible, the bytes are not. DuckDB writes the Parquet
+    in parallel, so two runs give files whose sizes differ by a few tens of
+    kilobytes. A run on 2026-10-02 and one on 2026-09-29 were compared row by
+    row in both directions with EXCEPT ALL, and no row differed.
