@@ -67,6 +67,16 @@ modifications:
     - the attribute file and the masters keep both their 2019 and 2020 files, told apart by an added version column; only the UTF-8 masters were used
     - attribute_mesh1km gained a polygon geometry from lon_min, lat_min, lon_max, lat_max (WGS 84)
     - rows were sorted
+  no_bloom_filters: |
+    The Parquet is written with write_bloom_filter false. DuckDB reads a
+    column's bloom filter in every row group a filter on that column touches,
+    even one its min/max statistics rule out. dayflag and timezone hold 0, 1
+    and 2 in every row group, so a query on one ward and month made 1,114 HTTP
+    requests (32 s from the Hub) with bloom filters, and 1,786 local file
+    operations against 170 without. The rows are sorted by prefecture, year
+    and month and the statistics alone skip the rest. The values with and
+    without bloom filters were compared both ways with EXCEPT ALL: no row
+    differed.
   reproducibility: |
     The values are reproducible, the bytes are not. DuckDB writes the Parquet
     in parallel, so two runs give files whose sizes differ by a few tens of

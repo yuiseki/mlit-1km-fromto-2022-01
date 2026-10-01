@@ -22,7 +22,7 @@ data/README.md                the dataset card. Uploaded as-is
 data/LICENSE                  the CC BY notice and the modifications, in Japanese as the terms ask
 data/provenance.yaml          the vintage, the counts, and what was done
 data/raw/                     generated, 192 MiB, the publisher's own files
-data/parquet/                 generated, 119 MiB
+data/parquet/                 generated, 112 MiB
 ```
 
 ## Running it
@@ -55,6 +55,12 @@ differs.
 **Two versions of the masters.** The attribute file and both masters exist
 for 2019 and 2020, side by side under a `version` column. Join without
 picking one and every row doubles.
+
+**Bloom filters cost a request per row group.** DuckDB writes them by
+default and reads them for every row group a filter touches, including the
+ones the statistics already excluded. Filtering on `dayflag` and `timezone`,
+which hold every value in every row group, turned one query into 1,114 HTTP
+requests. `03_export_parquet.py` writes without them.
 
 ## Licence
 

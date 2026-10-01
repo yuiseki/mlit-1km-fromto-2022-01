@@ -46,8 +46,15 @@ The publisher distributes 94 zip files, one per prefecture and kind, each
 holding a zip per month that holds one CSV. Nothing can be read in part: to
 look at Tokyo in December 2021 you unpack Tokyo, and to compare two
 prefectures you unpack both. This dataset is the same CSVs as five Parquet
-files, sorted so that a query on one prefecture and month reads a few row
-groups over HTTP.
+files, sorted by prefecture, year and month, so that the row group statistics
+let a reader skip what a query does not ask for.
+
+The Parquet carries no bloom filters, on purpose. DuckDB reads a column's
+bloom filter in every row group a filter on that column touches, even a row
+group the statistics have already ruled out. `dayflag` and `timezone` hold
+0, 1 and 2 in every row group, so with bloom filters the query below made
+1,114 HTTP requests and took 32 seconds from the Hub. Without them it reads a
+tenth as much.
 
 The month in the name is the month the files last changed. Every file was
 dated 2022-01-14 or earlier when this was first fetched, and the bytes have
