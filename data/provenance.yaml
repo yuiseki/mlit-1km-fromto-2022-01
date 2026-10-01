@@ -72,8 +72,8 @@ modifications:
     column's bloom filter in every row group a filter on that column touches,
     even one its min/max statistics rule out. dayflag and timezone hold 0, 1
     and 2 in every row group, so a query on one ward and month made 1,114 HTTP
-    requests (32 s from the Hub) with bloom filters, and 1,786 local file
-    operations against 170 without. The rows are sorted by prefecture, year
+    requests (32 s from the Hub) with bloom filters and 12 requests (6.7 s)
+    without; locally, 1,786 file operations against 170. The rows are sorted by prefecture, year
     and month and the statistics alone skip the rest. The values with and
     without bloom filters were compared both ways with EXCEPT ALL: no row
     differed.

@@ -53,8 +53,8 @@ The Parquet carries no bloom filters, on purpose. DuckDB reads a column's
 bloom filter in every row group a filter on that column touches, even a row
 group the statistics have already ruled out. `dayflag` and `timezone` hold
 0, 1 and 2 in every row group, so with bloom filters the query below made
-1,114 HTTP requests and took 32 seconds from the Hub. Without them it reads a
-tenth as much.
+1,114 HTTP requests and took 32 seconds from the Hub. Without them it makes 12
+and takes 7 (measured on 2026-10-02).
 
 The month in the name is the month the files last changed. Every file was
 dated 2022-01-14 or earlier when this was first fetched, and the bytes have
